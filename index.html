@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="EyeBreak — gentle reminders to rest your eyes during screen time, with a short guided exercise session. Free, private, works offline.">
+  <meta name="theme-color" content="#0e1420">
+  <title>EyeBreak — gentle eye-break reminders</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EyeBreak">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <path d="M4 32 Q 32 6 60 32 Q 32 58 4 32 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="32" cy="32" r="10" fill="none" stroke="currentColor" stroke-width="4"/>
+        <circle cx="32" cy="32" r="3.5" fill="currentColor"/>
+      </svg>
+      <h1>EyeBreak</h1>
+      <span id="debug-badge" class="debug-badge" hidden>debug · 10s</span>
+    </div>
+    <button id="btn-open-settings" class="icon-btn" type="button" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm9 4a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7.4 7.4 0 0 0-2-1.2L16 3h-4l-.5 2.6a7.4 7.4 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 7 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L12 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.07-.4.1-.8.1-1.2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" transform="translate(0.5 0)"/>
+      </svg>
+    </button>
+  </header>
+
+  <main id="main" class="app-main">
+
+    <!-- ============ HOME VIEW ============ -->
+    <section id="view-home" class="view view-home" aria-label="Next break countdown">
+
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+          <circle class="ring-track" cx="100" cy="100" r="90"/>
+          <circle id="ring-progress" class="ring-progress" cx="100" cy="100" r="90"/>
+        </svg>
+        <div class="ring-center">
+          <p id="countdown-time" class="countdown-time" role="timer" aria-live="off">--:--</p>
+          <p id="countdown-label" class="countdown-label">until your next eye break</p>
+        </div>
+      </div>
+
+      <p id="status-line" class="status-line" aria-live="polite"></p>
+
+      <div class="home-actions">
+        <button id="btn-start-now" class="btn btn-primary" type="button">Start a break now</button>
+        <div id="pause-actions" class="pause-actions">
+          <button id="btn-pause-1h" class="btn btn-ghost" type="button">Pause 1 h</button>
+          <button id="btn-pause-tomorrow" class="btn btn-ghost" type="button">Pause until tomorrow</button>
+        </div>
+        <button id="btn-resume" class="btn btn-ghost" type="button" hidden>Resume reminders</button>
+      </div>
+
+      <dl class="stats" aria-label="Today's stats">
+        <div class="stat">
+          <dt>Breaks today</dt>
+          <dd id="stat-breaks">0</dd>
+        </div>
+        <div class="stat">
+          <dt>Skipped today</dt>
+          <dd id="stat-skips">0</dd>
+        </div>
+        <div class="stat">
+          <dt>Day streak</dt>
+          <dd id="stat-streak">0</dd>
+        </div>
+      </dl>
+
+      <div id="notif-banner" class="banner" hidden>
+        <p id="notif-banner-text">Enable notifications so EyeBreak can remind you when this tab is in the background.</p>
+        <button id="btn-enable-notifs" class="btn btn-small" type="button">Enable notifications</button>
+      </div>
+
+      <div id="ios-hint" class="banner" hidden>
+        <p>On iPhone/iPad, notifications only work after you install the app: tap <strong>Share</strong> → <strong>Add to Home Screen</strong> (iOS 16.4 or later), then open EyeBreak from your home screen.</p>
+      </div>
+
+      <details id="limits-panel" class="limits">
+        <summary>How reminders work (honest version)</summary>
+        <ul>
+          <li><strong>Tab open, visible:</strong> reminders appear right here, with a gentle chime — fully reliable.</li>
+          <li><strong>Tab open, in background:</strong> you get a system notification (if allowed). Browsers throttle background tabs, so it can arrive up to a minute late.</li>
+          <li><strong>Tab or app closed:</strong> no reminder is possible — a closed web app can't run. The next time you open EyeBreak, an overdue break is offered right away.</li>
+          <li><strong>iPhone/iPad:</strong> notifications require iOS 16.4+ and installing via <em>Share → Add to Home Screen</em>. In a plain Safari tab they are not available.</li>
+          <li><strong>Best setup:</strong> keep EyeBreak open in a pinned tab (desktop) or install it to your home screen (mobile).</li>
+        </ul>
+      </details>
+
+    </section>
+
+    <!-- ============ SETTINGS PANEL ============ -->
+    <aside id="settings-panel" class="settings-panel" aria-label="Settings" hidden>
+      <div class="settings-head">
+        <h2>Settings</h2>
+        <button id="btn-close-settings" class="icon-btn" type="button" aria-label="Close settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <fieldset class="setting-group">
+        <legend>Remind me every</legend>
+        <div class="radio-list" id="interval-options">
+          <label class="radio-row">
+            <input type="radio" name="interval" value="20">
+            <span>20 minutes <em class="tag">recommended (20-20-20 rule)</em></span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="interval" value="30">
+            <span>30 minutes</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="interval" value="60">
+            <span>60 minutes</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="interval" value="120">
+            <span>2 hours</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="setting-group">
+        <label class="switch-row" for="sound-toggle">
+          <span>Sound chimes</span>
+          <input type="checkbox" id="sound-toggle" role="switch" checked>
+        </label>
+      </div>
+
+      <div class="setting-group">
+        <p class="setting-note" id="notif-status-line">Notifications: checking…</p>
+      </div>
+
+      <div class="setting-group">
+        <p class="setting-note">All data stays on your device. No account, no ads, no tracking.</p>
+      </div>
+    </aside>
+
+    <!-- ============ PRE-BREAK TOAST ============ -->
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+      <p>Eye break in <span id="toast-seconds">15</span> s — finish your thought.</p>
+      <button id="btn-toast-dismiss" class="icon-btn icon-btn-small" type="button" aria-label="Dismiss heads-up">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <!-- ============ EXERCISE OVERLAY ============ -->
+    <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title" hidden>
+
+      <!-- Prompt: never auto-starts -->
+      <div id="overlay-prompt" class="overlay-pane">
+        <svg class="overlay-eye" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <path d="M4 32 Q 32 6 60 32 Q 32 58 4 32 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="32" cy="32" r="10" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="32" cy="32" r="3.5" fill="currentColor"/>
+        </svg>
+        <h2 id="overlay-title">Time for an eye break</h2>
+        <p class="overlay-sub">About a minute of gentle exercises. Start when ready — nothing happens until you do.</p>
+        <div class="overlay-actions">
+          <button id="btn-begin" class="btn btn-primary btn-big" type="button">Start when ready</button>
+          <div class="overlay-secondary">
+            <button id="btn-snooze" class="btn btn-ghost" type="button">Snooze 5 min</button>
+            <button id="btn-skip-break" class="btn btn-ghost" type="button">Skip this break</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guided session -->
+      <div id="overlay-session" class="overlay-pane" hidden>
+        <p id="step-count" class="step-count">1 of 6</p>
+        <h2 id="step-title" class="step-title">Blink refresh</h2>
+        <p id="step-instruction" class="step-instruction" aria-live="polite">Close your eyes gently, then blink slowly five times.</p>
+
+        <div id="visual-stage" class="visual-stage" aria-hidden="true">
+          <!-- per-exercise visuals injected by JS -->
+        </div>
+
+        <div class="step-ring-wrap">
+          <svg class="ring ring-small" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+            <circle class="ring-track" cx="60" cy="60" r="52"/>
+            <circle id="step-ring" class="ring-progress" cx="60" cy="60" r="52"/>
+          </svg>
+          <span id="step-seconds" class="step-seconds" role="timer" aria-live="off">8</span>
+        </div>
+
+        <div class="overlay-secondary">
+          <button id="btn-skip-step" class="btn btn-ghost" type="button">Skip step</button>
+          <button id="btn-end-session" class="btn btn-ghost" type="button">End session</button>
+        </div>
+      </div>
+
+      <!-- Completion -->
+      <div id="overlay-done" class="overlay-pane" hidden>
+        <div class="done-glow" aria-hidden="true"></div>
+        <h2>Done — eyes refreshed</h2>
+        <p id="done-stats" class="overlay-sub">Break 1 today · 1-day streak</p>
+        <p class="overlay-sub subtle">Next reminder is scheduled.</p>
+        <button id="btn-close-done" class="btn btn-primary" type="button">Back to work</button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>All data stays on your device. No account, no ads, no tracking.</p>
+    <p class="disclaimer">Not medical advice — if you have eye pain or vision changes, see a professional.</p>
+  </footer>
+
+  <script src="js/settings.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/exercises.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
