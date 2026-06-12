@@ -1,7 +1,3 @@
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-.vscode
-**/*.swp
-env
+.DS_Store
+Thumbs.db
+*.log
