@@ -42,7 +42,7 @@
   }
 
   function setNext(at) {
-    S.set({ nextReminderAt: at });
+    S.set({ nextReminderAt: at, spanMs: spanMs });
     promptShownFor = 0;
     notifiedFor = 0;
     toastDismissedFor = 0;
@@ -154,9 +154,10 @@
       if (k in hooks) hooks[k] = h[k];
     });
 
-    // If a persisted reminder is still in the future, keep it; the ring
-    // fraction is measured against the configured interval span.
-    spanMs = intervalMs();
+    // If a persisted reminder is still in the future, keep it — and restore
+    // the span it was scheduled with (a 5-min snooze, say), so the ring
+    // fraction survives a reload. Fall back to the configured interval.
+    spanMs = (S.state.spanMs > 0) ? S.state.spanMs : intervalMs();
 
     if (tickId) clearInterval(tickId);
     tickId = setInterval(tick, 1000);

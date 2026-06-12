@@ -10,6 +10,7 @@
     intervalMin: 60,        // 20 | 30 | 60 | 120 (default 60; 20 labeled "recommended")
     soundOn: true,
     nextReminderAt: null,   // epoch ms of next reminder, or null
+    spanMs: null,           // length (ms) of the current countdown span (interval or snooze)
     pausedUntil: null,      // epoch ms while reminders are paused, or null
     completedToday: 0,
     skippedToday: 0,

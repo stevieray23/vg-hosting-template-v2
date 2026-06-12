@@ -43,6 +43,7 @@ Single JSON key `eyebreak.v1`:
   "intervalMin": 60,
   "soundOn": true,
   "nextReminderAt": null,
+  "spanMs": null,
   "pausedUntil": null,
   "completedToday": 0,
   "skippedToday": 0,
@@ -54,6 +55,7 @@ Single JSON key `eyebreak.v1`:
 
 - `intervalMin`: 20 | 30 | 60 | 120 (default 60).
 - `nextReminderAt` / `pausedUntil`: epoch ms or null.
+- `spanMs`: length (ms) of the countdown span `nextReminderAt` was scheduled with (full interval or snooze), so the ring fraction survives a reload; null until first scheduled.
 - `statsDate`: local `YYYY-MM-DD` the `*Today` counters belong to; counters reset lazily when the date rolls over.
 - `lastCompletedDate` + `streak`: streak = consecutive local days with ≥1 completed session.
 

@@ -20,6 +20,11 @@
 
 * { box-sizing: border-box; }
 
+/* Author display rules (e.g. `.overlay { display: flex }`) would otherwise
+   beat the UA's `[hidden] { display: none }` — JS toggles views via `hidden`,
+   so this must always win. */
+[hidden] { display: none !important; }
+
 html { height: 100%; }
 
 body {

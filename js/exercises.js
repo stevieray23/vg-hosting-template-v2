@@ -66,14 +66,15 @@
     lastShownSeconds: -1,
     onStep: null,   // function(step, index, total)
     onTick: null,   // function(secondsLeft, fraction)
-    onDone: null,   // function(completed:boolean)
-    completedNormally: false
+    onDone: null,   // function(outcome: 'completed'|'skipped'|'aborted')
+    anyStepCompleted: false // ≥1 step ran to its natural end this session
   };
 
   function start(callbacks) {
     stopTick();
     session.active = true;
     session.stepIndex = 0;
+    session.anyStepCompleted = false;
     session.onStep = callbacks.onStep || null;
     session.onTick = callbacks.onTick || null;
     session.onDone = callbacks.onDone || null;
@@ -108,6 +109,7 @@
   /** Move to the next step; skipped=true when the user pressed "Skip step". */
   function advance(skipped) {
     if (!session.active) return;
+    if (!skipped) session.anyStepCompleted = true;
     var next = session.stepIndex + 1;
     if (next >= STEPS.length) {
       finish(true);
@@ -127,11 +129,15 @@
     finish(false);
   }
 
-  function finish(completed) {
+  function finish(reachedEnd) {
     stopTick();
     session.active = false;
-    if (completed && window.EB.sound) window.EB.sound.done();
-    if (session.onDone) session.onDone(completed);
+    // Skip-clicking through every step is not a real break: report it as
+    // 'skipped' (no completion credit, no done-chime).
+    var outcome = !reachedEnd ? 'aborted'
+      : (session.anyStepCompleted ? 'completed' : 'skipped');
+    if (outcome === 'completed' && window.EB.sound) window.EB.sound.done();
+    if (session.onDone) session.onDone(outcome);
   }
 
   function stopTick() {

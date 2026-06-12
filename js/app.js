@@ -51,6 +51,7 @@
     stepSeconds: $('step-seconds'),
     btnSkipStep: $('btn-skip-step'),
     btnEndSession: $('btn-end-session'),
+    doneTitle: $('done-title'),
     doneStats: $('done-stats'),
     btnCloseDone: $('btn-close-done'),
     debugBadge: $('debug-badge')
@@ -94,8 +95,12 @@
       el.countdownLabel.textContent = 'reminders paused';
       el.ringProgress.style.strokeDashoffset = RING_HOME_C;
       var until = info.pausedUntil;
-      var isTomorrow = new Date(until).getDate() !== new Date().getDate();
-      el.statusLine.textContent = isTomorrow
+      // "Until tomorrow" only for the until-tomorrow sentinel (next local
+      // midnight); a timed pause that happens to cross midnight still shows
+      // its actual resume time (e.g. "Paused until 00:30").
+      var startOfTomorrow = new Date();
+      startOfTomorrow.setHours(24, 0, 0, 0);
+      el.statusLine.textContent = (until === startOfTomorrow.getTime())
         ? 'Paused until tomorrow'
         : 'Paused until ' + fmtClock(until);
       el.statusLine.classList.add('paused');
@@ -229,16 +234,25 @@
         el.stepSeconds.textContent = secondsLeft;
         el.stepRing.style.strokeDashoffset = RING_STEP_C * (1 - fraction);
       },
-      onDone: function (completed) {
+      onDone: function (outcome) {
         el.overlay.classList.remove('resting');
-        if (completed) {
+        if (outcome === 'completed') {
           S.recordCompletion();
           renderStats();
           var n = S.state.completedToday;
           var streak = S.currentStreak();
+          el.doneTitle.textContent = 'Done — eyes refreshed';
           el.doneStats.textContent =
             (n === 1 ? 'First break today' : 'Break ' + n + ' today') +
             ' · ' + streak + '-day streak';
+          el.doneStats.hidden = false;
+          showPane('done');
+        } else if (outcome === 'skipped') {
+          // Every step was skip-clicked: counts as a skipped break, no streak.
+          S.recordSkip();
+          renderStats();
+          el.doneTitle.textContent = 'Break skipped — see you next time';
+          el.doneStats.hidden = true;
           showPane('done');
         } else {
           hideOverlay();
