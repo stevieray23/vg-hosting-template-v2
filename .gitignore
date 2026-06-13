@@ -1,3 +1,6 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# Seller signing key for supporter unlock codes — NEVER commit this.
+tools/eyebreak-private-key.jwk
