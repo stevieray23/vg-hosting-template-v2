@@ -23,25 +23,43 @@
 
   <main id="main" class="app-main" style="display:block;max-width:680px;">
     <h2>Privacy Policy</h2>
-    <p class="setting-note" style="padding:0;">Last updated: 2026</p>
+    <p class="setting-note" style="padding:0;">Last updated: 2026-06-13</p>
 
     <h3>The short version</h3>
-    <p>EyeBreak has <strong>no accounts, no servers, no tracking and no analytics</strong>. We do not collect, transmit or sell any personal data. Everything the app remembers stays on your own device.</p>
+    <p>EyeBreak has <strong>no accounts, no ads, no tracking, no analytics, no cookies and no servers</strong>. We do not collect, transmit or sell any personal data. Everything the app remembers stays on your own device, and nothing is ever sent to us.</p>
 
     <h3>What is stored, and where</h3>
-    <p>Your settings and counters (reminder interval, sound on/off, today’s break/skip counts, day streak, chosen theme and chime pack, and — if you bought the supporter unlock — your unlock code and name) are saved in your browser’s <code>localStorage</code> under a single key. This data never leaves your device. Clearing your browser storage deletes it.</p>
+    <p>EyeBreak saves all of its state in your browser’s <code>localStorage</code> under a single key, <code>eyebreak.v1</code>. That key holds:</p>
+    <ul>
+      <li>your reminder interval and (if you unlocked it) a custom interval,</li>
+      <li>sound on/off and the chosen chime pack,</li>
+      <li>the chosen color theme,</li>
+      <li>scheduling timestamps (when the next reminder is due, pause/snooze state),</li>
+      <li>your daily break and skip counts, day streak and the dates they belong to, and</li>
+      <li>if you bought the supporter unlock, your <strong>unlock code and the name on it</strong>.</li>
+    </ul>
+    <p>All of this lives on your device only. Clearing your browser storage deletes it. Nothing in this key is transmitted anywhere.</p>
 
-    <h3>The supporter unlock code</h3>
-    <p>Unlock codes are verified entirely on your device using offline cryptography (Web Crypto). <strong>No network request is made to verify a code</strong>, and no purchase or identity data is sent anywhere by the app.</p>
+    <h3>Nothing is transmitted</h3>
+    <p>The app makes <strong>no network requests to verify your unlock code</strong> — verification happens entirely on your device using offline cryptography (Web Crypto). The app does not phone home, and there is no backend that could receive your data.</p>
 
     <h3>Notifications</h3>
-    <p>If you grant notification permission, reminders are shown by your browser/operating system. EyeBreak does not use any push server; notifications are generated locally.</p>
+    <p>If you grant notification permission, reminders are shown by your own browser or operating system. EyeBreak uses <strong>no push server</strong>; every notification is generated locally on your device.</p>
 
     <h3>Payments</h3>
-    <p>If you choose to buy the supporter unlock, the purchase happens on a third-party merchant-of-record checkout, which has its own privacy policy. EyeBreak itself never sees your payment details.</p>
+    <p>If you choose to buy the supporter unlock, the purchase happens on a third-party checkout operated by <strong>Lemon Squeezy</strong>, which acts as the Merchant of Record. <strong>Your payment data is handled solely by Lemon Squeezy</strong> under its own privacy policy, available at <a href="https://www.lemonsqueezy.com/privacy" target="_blank" rel="noopener" style="color:var(--accent);">https://www.lemonsqueezy.com/privacy</a>. EyeBreak itself never sees or stores your payment details.</p>
 
-    <h3>Your rights</h3>
-    <p>Because we hold no data about you, there is nothing for us to access, export or delete on your behalf. You are always in full control via your browser’s storage settings.</p>
+    <h3>GDPR / CCPA</h3>
+    <p>Because EyeBreak holds <strong>no server-side data about you</strong>, there is nothing for us to access, export, correct or delete on your behalf, and nothing for us to “sell” or “share”. You remain in full control of the on-device data at all times through your browser’s storage settings. Any data related to your payment is held by Lemon Squeezy, and requests about that data should be directed to them.</p>
+
+    <h3>Children</h3>
+    <p>EyeBreak is intended for a general audience and is not directed at children. Because we collect no personal data, the app does not knowingly gather information from anyone, including children.</p>
+
+    <h3>Changes to this policy</h3>
+    <p>We may update this policy as the app evolves. The “last updated” date above reflects the latest version.</p>
+
+    <h3>Contact</h3>
+    <p>Questions about your privacy? Email <a href="mailto:stephan.g2000@gmx.de" style="color:var(--accent);">stephan.g2000@gmx.de</a>.</p>
 
     <p style="margin-top:2rem;"><a href="terms.html" style="color:var(--accent);">Terms of Use</a> · <a href="index.html" style="color:var(--accent);">Back to app</a></p>
   </main>
