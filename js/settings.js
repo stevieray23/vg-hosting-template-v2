@@ -16,7 +16,13 @@
     skippedToday: 0,
     lastCompletedDate: null, // "YYYY-MM-DD" of last completed session (streak anchor)
     streak: 0,               // consecutive days with >= 1 completed session
-    statsDate: null          // "YYYY-MM-DD" the *Today counters belong to
+    statsDate: null,         // "YYYY-MM-DD" the *Today counters belong to
+
+    // --- Supporter unlock (cosmetic/convenience extras only; see js/premium.js) ---
+    supporter: { unlockedAt: null, name: null, code: null },
+    theme: 'dark',           // 'dark' (free) | 'warm' | 'cool' | 'contrast' (gated)
+    chimePack: 'default',    // 'default' (free) | 'soft' | 'bright' | 'wood' (gated)
+    customIntervalMin: null  // number 5..240, or null = use the preset intervalMin
   };
 
   var state = load();
@@ -36,6 +42,17 @@
     });
     if ([20, 30, 60, 120].indexOf(merged.intervalMin) === -1) {
       merged.intervalMin = DEFAULTS.intervalMin;
+    }
+    // Clamp the optional custom interval; null means "use the preset above".
+    if (merged.customIntervalMin != null) {
+      var ci = Number(merged.customIntervalMin);
+      merged.customIntervalMin = (isFinite(ci) && ci >= 5 && ci <= 240)
+        ? Math.round(ci)
+        : null;
+    }
+    // Defensive shape for the supporter object (older/partial saves).
+    if (!merged.supporter || typeof merged.supporter !== 'object') {
+      merged.supporter = { unlockedAt: null, name: null, code: null };
     }
     return merged;
   }
