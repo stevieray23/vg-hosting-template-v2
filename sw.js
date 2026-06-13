@@ -8,14 +8,17 @@
  * serving the old files.
  */
 
-var CACHE_VERSION = 'eyebreak-v2';
+var CACHE_VERSION = 'eyebreak-v4';
 
 /* All URLs relative — the app is served from a subpath on GitHub Pages. */
 var PRECACHE = [
   './',
   './index.html',
+  './terms.html',
+  './privacy.html',
   './css/style.css',
   './js/settings.js',
+  './js/premium.js',
   './js/sound.js',
   './js/exercises.js',
   './js/timer.js',

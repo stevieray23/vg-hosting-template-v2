@@ -14,6 +14,21 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="EyeBreak">
+  <!-- The only inline script in the app. It sets the saved theme BEFORE the
+       stylesheet paints, to avoid a flash of the default dark theme. The theme
+       is a cosmetic supporter extra; if no valid theme is stored, dark (the
+       free default) is used. premium.js re-verifies the unlock a tick later. -->
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem('eyebreak.v1');
+        var t = raw && (JSON.parse(raw) || {}).theme;
+        if (['warm', 'cool', 'contrast'].indexOf(t) !== -1) {
+          document.documentElement.dataset.theme = t;
+        }
+      } catch (e) { /* ignore — fall back to default theme */ }
+    })();
+  </script>
 </head>
 <body>
 
@@ -28,6 +43,7 @@
       </svg>
       <h1>EyeBreak</h1>
       <span id="debug-badge" class="debug-badge" hidden>debug · 10s</span>
+      <span id="supporter-badge" class="supporter-badge" hidden>♥ Supporter</span>
     </div>
     <button id="btn-open-settings" class="icon-btn" type="button" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -138,12 +154,76 @@
         </label>
       </div>
 
+      <!-- Supporter extra: custom reminder interval (gated) -->
+      <fieldset class="setting-group">
+        <legend>Custom interval <em class="lock-chip" id="lock-interval" hidden>Supporter extra</em></legend>
+        <div class="picker-row" id="row-custom-interval">
+          <span>Every <span id="custom-interval-unit">minutes</span></span>
+          <input type="number" id="custom-interval" min="5" max="240" step="5" inputmode="numeric" placeholder="—" aria-label="Custom reminder interval in minutes">
+        </div>
+        <p class="setting-note" id="custom-interval-note">Beyond the presets above (5–240 min). Pick a preset to clear it.</p>
+      </fieldset>
+
+      <!-- Supporter extra: chime sound pack (gated) -->
+      <fieldset class="setting-group">
+        <legend>Chime sound <em class="lock-chip" id="lock-chime" hidden>Supporter extra</em></legend>
+        <div class="picker-row" id="row-chime">
+          <span>Sound pack</span>
+          <select id="chime-select" aria-label="Chime sound pack">
+            <option value="default">Default</option>
+            <option value="soft">Soft</option>
+            <option value="bright">Bright</option>
+            <option value="wood">Wood</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <!-- Supporter extra: color theme (gated) -->
+      <fieldset class="setting-group">
+        <legend>Color theme <em class="lock-chip" id="lock-theme" hidden>Supporter extra</em></legend>
+        <div class="picker-row" id="row-theme">
+          <span>Theme</span>
+          <select id="theme-select" aria-label="Color theme">
+            <option value="dark">Dark (default)</option>
+            <option value="warm">Warm</option>
+            <option value="cool">Cool</option>
+            <option value="contrast">High contrast</option>
+          </select>
+        </div>
+      </fieldset>
+
       <div class="setting-group">
         <p class="setting-note" id="notif-status-line">Notifications: checking…</p>
       </div>
 
+      <!-- Support EyeBreak -->
+      <section class="setting-group supporter" aria-label="Support EyeBreak">
+        <h2 style="margin:0 0 0.5rem;font-size:1rem;">Support EyeBreak</h2>
+        <div id="supporter-locked">
+          <p>EyeBreak is free and always will be — reminders, exercises, snooze/skip and stats stay free. A one-time <span class="supporter-price" id="supporter-price">€9</span> unlock adds optional extras: color themes, chime packs and a custom interval. A thank-you, not a paywall on anything that matters.</p>
+          <a id="supporter-store-link" class="supporter-link" href="#" target="_blank" rel="noopener">Get the supporter unlock →</a>
+          <div class="redeem-row">
+            <input type="text" id="redeem-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste your unlock code" aria-label="Unlock code">
+            <button id="btn-paste-code" class="btn btn-small" type="button">Paste</button>
+            <button id="btn-redeem" class="btn btn-small btn-primary" type="button">Redeem</button>
+          </div>
+          <p class="redeem-msg" id="redeem-msg" aria-live="polite"></p>
+        </div>
+        <div id="supporter-thanks" class="supporter-thanks" hidden>
+          <p>Thank you for supporting EyeBreak — <strong id="supporter-name">supporter</strong>. Your extras are unlocked. <span class="setting-note" style="padding:0;display:block;margin-top:0.4rem;">Keep your code safe; paste it again if this device's storage is ever cleared.</span></p>
+          <div class="redeem-row">
+            <input type="text" id="redeem-input-2" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Re-paste code if needed" aria-label="Unlock code">
+            <button id="btn-redeem-2" class="btn btn-small" type="button">Redeem</button>
+          </div>
+        </div>
+      </section>
+
       <div class="setting-group">
         <p class="setting-note">All data stays on your device. No account, no ads, no tracking.</p>
+        <p class="setting-note" style="margin-top:0.4rem;">
+          <a href="terms.html" style="color:inherit;">Terms</a> ·
+          <a href="privacy.html" style="color:inherit;">Privacy</a>
+        </p>
       </div>
     </aside>
 
@@ -216,9 +296,11 @@
   <footer class="app-footer">
     <p>All data stays on your device. No account, no ads, no tracking.</p>
     <p class="disclaimer">Not medical advice — if you have eye pain or vision changes, see a professional.</p>
+    <p><a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a></p>
   </footer>
 
   <script src="js/settings.js"></script>
+  <script src="js/premium.js"></script>
   <script src="js/sound.js"></script>
   <script src="js/exercises.js"></script>
   <script src="js/timer.js"></script>

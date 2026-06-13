@@ -51,28 +51,63 @@
     return !!(window.EB && window.EB.settings && window.EB.settings.state.soundOn);
   }
 
+  /* Chime sound packs. The "default" pack is free; the others are a supporter
+   * extra (cosmetic only — they change how the chime sounds, nothing else).
+   * Each entry is an array of tone descriptors fed to the private tone():
+   *   [freq, startDelay, duration, peak]
+   * All packs keep the same gentle sine envelope; just different notes. */
+  var CHIME_PACKS = {
+    default: {
+      reminder: [[660, 0, 0.5, 0.16], [880, 0.18, 0.6, 0.12]],
+      step:     [[740, 0, 0.28, 0.12]],
+      done:     [[587.33, 0, 0.5, 0.15], [880, 0.22, 0.8, 0.13]]    // D5 → A5
+    },
+    soft: {                                                          // lower / rounder
+      reminder: [[392, 0, 0.6, 0.16], [523.25, 0.2, 0.7, 0.12]],     // G4 → C5
+      step:     [[523.25, 0, 0.3, 0.11]],
+      done:     [[392, 0, 0.55, 0.15], [587.33, 0.24, 0.85, 0.12]]   // G4 → D5
+    },
+    bright: {                                                        // airy / higher
+      reminder: [[880, 0, 0.45, 0.13], [1174.66, 0.16, 0.55, 0.10]], // A5 → D6
+      step:     [[1046.5, 0, 0.24, 0.10]],                           // C6
+      done:     [[783.99, 0, 0.45, 0.13], [1174.66, 0.2, 0.75, 0.11]] // G5 → D6
+    },
+    wood: {                                                          // warm fifths
+      reminder: [[523.25, 0, 0.5, 0.16], [784, 0.18, 0.6, 0.12]],    // C5 → G5
+      step:     [[659.25, 0, 0.28, 0.12]],                           // E5
+      done:     [[349.23, 0, 0.55, 0.15], [523.25, 0.22, 0.85, 0.13]] // F4 → C5
+    }
+  };
+
+  /** Active pack, falling back to 'default' for unknown packs or non-supporters. */
+  function currentPack() {
+    var name = (window.EB && window.EB.settings && window.EB.settings.state.chimePack) || 'default';
+    var supporter = !!(window.EB && window.EB.premium && window.EB.premium.isUnlocked());
+    if (name !== 'default' && !supporter) name = 'default';
+    return CHIME_PACKS[name] || CHIME_PACKS.default;
+  }
+
+  function play(kind) {
+    if (!soundOn()) return;
+    var tones = currentPack()[kind] || [];
+    for (var i = 0; i < tones.length; i++) {
+      var t = tones[i];
+      tone(t[0], t[1], t[2], t[3]);
+    }
+  }
+
   window.EB = window.EB || {};
   window.EB.sound = {
     unlock: unlock,
+    PACKS: CHIME_PACKS,
 
     /** Gentle single chime — break is due. */
-    reminder: function () {
-      if (!soundOn()) return;
-      tone(660, 0, 0.5, 0.16);
-      tone(880, 0.18, 0.6, 0.12);
-    },
+    reminder: function () { play('reminder'); },
 
     /** Tiny tick — exercise step changed. */
-    step: function () {
-      if (!soundOn()) return;
-      tone(740, 0, 0.28, 0.12);
-    },
+    step: function () { play('step'); },
 
     /** Warm two-note resolve — session complete. */
-    done: function () {
-      if (!soundOn()) return;
-      tone(587.33, 0, 0.5, 0.15);   // D5
-      tone(880, 0.22, 0.8, 0.13);   // A5
-    }
+    done: function () { play('done'); }
   };
 })();

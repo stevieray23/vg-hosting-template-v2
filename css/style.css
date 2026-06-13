@@ -16,6 +16,69 @@
   --radius: 16px;
   --shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Theme-tunable extras (overridden per data-theme below). These cover the
+     two hardcoded spots that don't flow through the vars above: the body
+     background gradient stops and the on-accent text color (skip-link,
+     primary-button label, switch thumb). */
+  --grad-1: #18233a;
+  --grad-2: #11203020;
+  --on-accent: #08251f;
+  --accent-hover: #74cbb8;
+}
+
+/* ----- Themes (supporter extra). 'dark' = the :root defaults above. -----
+   Every color flows through these custom properties, so a theme only needs to
+   redefine the variables. */
+html[data-theme="warm"] {
+  --bg: #1a1410;
+  --bg-soft: #241b14;
+  --bg-card: #2c2118;
+  --line: #4a3a2a;
+  --text: #f3e7d8;
+  --text-dim: #b59c82;
+  --accent: #e0a96d;
+  --accent-soft: rgba(224, 169, 109, 0.16);
+  --accent-hover: #ecbd84;
+  --warn: #e0a96d;
+  --ring-track: #3a2c1f;
+  --grad-1: #2a1f16;
+  --grad-2: #1a141020;
+  --on-accent: #2b1c0c;
+}
+
+html[data-theme="cool"] {
+  --bg: #12131f;
+  --bg-soft: #1a1c2c;
+  --bg-card: #21243a;
+  --line: #353a5a;
+  --text: #e3e5f5;
+  --text-dim: #9aa0c5;
+  --accent: #9aa6ec;
+  --accent-soft: rgba(154, 166, 236, 0.16);
+  --accent-hover: #b3bdf2;
+  --warn: #d0a0e0;
+  --ring-track: #2a2e48;
+  --grad-1: #1f2238;
+  --grad-2: #12131f20;
+  --on-accent: #141528;
+}
+
+html[data-theme="contrast"] {
+  --bg: #000000;
+  --bg-soft: #0a0a0a;
+  --bg-card: #141414;
+  --line: #5a5a5a;
+  --text: #ffffff;
+  --text-dim: #d0d0d0;        /* ~13:1 on #000 — passes for body text */
+  --accent: #ffd24d;          /* ~14:1 on #000 — UI / large text */
+  --accent-soft: rgba(255, 210, 77, 0.18);
+  --accent-hover: #ffe07a;
+  --warn: #ffd24d;
+  --ring-track: #3a3a3a;
+  --grad-1: #000000;
+  --grad-2: #00000000;
+  --on-accent: #000000;
 }
 
 * { box-sizing: border-box; }
@@ -32,8 +95,8 @@ body {
   min-height: 100%;
   font-family: var(--font);
   background:
-    radial-gradient(1100px 600px at 75% -10%, #18233a 0%, transparent 60%),
-    radial-gradient(900px 600px at -10% 100%, #11203020 0%, transparent 60%),
+    radial-gradient(1100px 600px at 75% -10%, var(--grad-1) 0%, transparent 60%),
+    radial-gradient(900px 600px at -10% 100%, var(--grad-2) 0%, transparent 60%),
     var(--bg);
   color: var(--text);
   line-height: 1.55;
@@ -48,7 +111,7 @@ body {
   left: -999px;
   top: 0;
   background: var(--accent);
-  color: #08251f;
+  color: var(--on-accent);
   padding: 0.5rem 1rem;
   border-radius: 0 0 8px 0;
   z-index: 100;
@@ -222,10 +285,10 @@ button { font-family: inherit; }
 .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #08251f;
+  color: var(--on-accent);
   font-weight: 600;
 }
-.btn-primary:hover { background: #74cbb8; border-color: #74cbb8; }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 
 .btn-ghost {
   background: transparent;
@@ -429,7 +492,7 @@ button { font-family: inherit; }
   transition: transform 0.2s, background 0.2s;
 }
 .switch-row input:checked { background: var(--accent); }
-.switch-row input:checked::after { transform: translateX(20px); background: #08251f; }
+.switch-row input:checked::after { transform: translateX(20px); background: var(--on-accent); }
 
 .setting-note {
   margin: 0;
@@ -725,6 +788,107 @@ button { font-family: inherit; }
   background: radial-gradient(circle, rgba(95, 184, 165, 0.55) 0%, transparent 70%);
   animation: rest-pulse 3s ease-in-out infinite;
 }
+
+/* ---------- Supporter unlock (cosmetic extras) ---------- */
+
+.supporter {
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+}
+.supporter p { margin: 0 0 0.6rem; font-size: 0.85rem; color: var(--text-dim); }
+.supporter .supporter-price { color: var(--text); font-weight: 600; }
+.supporter .supporter-link {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.supporter .supporter-link:hover { text-decoration: underline; }
+
+.redeem-row { display: flex; gap: 0.4rem; align-items: stretch; flex-wrap: wrap; }
+.redeem-row input[type="text"] {
+  flex: 1 1 12ch;
+  min-width: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 0.55rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.redeem-row input[type="text"]:focus-visible { outline: 2px solid var(--accent); }
+
+.redeem-msg {
+  margin: 0.55rem 0 0;
+  font-size: 0.82rem;
+  min-height: 1.2em;
+  color: var(--text-dim);
+}
+.redeem-msg.is-error { color: var(--warn); }
+.redeem-msg.is-ok { color: var(--accent); }
+
+.supporter-thanks { color: var(--text); }
+.supporter-thanks strong { color: var(--accent); }
+
+/* Locked (supporter-only) control rows */
+.locked { position: relative; opacity: 0.55; }
+.locked input,
+.locked select,
+.locked button { cursor: not-allowed; }
+.lock-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.4rem;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* A small "♥ Supporter" badge near the brand/stats when unlocked */
+.supporter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+
+/* Themed select + number input rows (match .radio-row look) */
+.picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 12px;
+}
+.picker-row > span { font-size: 0.92rem; }
+.picker-row select,
+.picker-row input[type="number"] {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 0.45rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.picker-row input[type="number"] { width: 6.5rem; }
+.picker-row select:disabled,
+.picker-row input:disabled { color: var(--text-dim); }
 
 /* ---------- Footer ---------- */
 

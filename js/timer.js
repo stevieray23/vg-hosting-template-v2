@@ -32,6 +32,14 @@
 
   function intervalMs() {
     if (DEBUG) return 10 * 1000; // ?debug=1 → 10-second interval for testing
+    // Supporter extra: a custom interval overrides the preset when unlocked.
+    // The core loop is never gated — without the unlock we fall back to the
+    // free preset, so reminders keep working exactly as before.
+    var custom = S.state.customIntervalMin;
+    var unlocked = !!(window.EB && window.EB.premium && window.EB.premium.isUnlocked());
+    if (unlocked && typeof custom === 'number' && custom > 0) {
+      return custom * 60 * 1000;
+    }
     return S.state.intervalMin * 60 * 1000;
   }
 
