@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e1420">
+  <title>EyeBreak — Privacy</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <path d="M4 32 Q 32 6 60 32 Q 32 58 4 32 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="32" cy="32" r="10" fill="none" stroke="currentColor" stroke-width="4"/>
+        <circle cx="32" cy="32" r="3.5" fill="currentColor"/>
+      </svg>
+      <h1>EyeBreak</h1>
+    </div>
+    <a class="btn btn-small" href="index.html">Back to app</a>
+  </header>
+
+  <main id="main" class="app-main" style="display:block;max-width:680px;">
+    <h2>Privacy Policy</h2>
+    <p class="setting-note" style="padding:0;">Last updated: 2026</p>
+
+    <h3>The short version</h3>
+    <p>EyeBreak has <strong>no accounts, no servers, no tracking and no analytics</strong>. We do not collect, transmit or sell any personal data. Everything the app remembers stays on your own device.</p>
+
+    <h3>What is stored, and where</h3>
+    <p>Your settings and counters (reminder interval, sound on/off, today’s break/skip counts, day streak, chosen theme and chime pack, and — if you bought the supporter unlock — your unlock code and name) are saved in your browser’s <code>localStorage</code> under a single key. This data never leaves your device. Clearing your browser storage deletes it.</p>
+
+    <h3>The supporter unlock code</h3>
+    <p>Unlock codes are verified entirely on your device using offline cryptography (Web Crypto). <strong>No network request is made to verify a code</strong>, and no purchase or identity data is sent anywhere by the app.</p>
+
+    <h3>Notifications</h3>
+    <p>If you grant notification permission, reminders are shown by your browser/operating system. EyeBreak does not use any push server; notifications are generated locally.</p>
+
+    <h3>Payments</h3>
+    <p>If you choose to buy the supporter unlock, the purchase happens on a third-party merchant-of-record checkout, which has its own privacy policy. EyeBreak itself never sees your payment details.</p>
+
+    <h3>Your rights</h3>
+    <p>Because we hold no data about you, there is nothing for us to access, export or delete on your behalf. You are always in full control via your browser’s storage settings.</p>
+
+    <p style="margin-top:2rem;"><a href="terms.html" style="color:var(--accent);">Terms of Use</a> · <a href="index.html" style="color:var(--accent);">Back to app</a></p>
+  </main>
+
+  <footer class="app-footer">
+    <p>All data stays on your device. No account, no ads, no tracking.</p>
+    <p class="disclaimer">Not medical advice — if you have eye pain or vision changes, see a professional.</p>
+  </footer>
+</body>
+</html>
