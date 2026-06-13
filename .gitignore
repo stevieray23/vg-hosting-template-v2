@@ -4,3 +4,7 @@ Thumbs.db
 
 # Seller signing key for supporter unlock codes — NEVER commit this.
 tools/eyebreak-private-key.jwk
+
+# Worker local secrets + deps — NEVER commit these.
+worker/.dev.vars
+worker/node_modules

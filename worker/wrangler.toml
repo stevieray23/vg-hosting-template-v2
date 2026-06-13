@@ -1,0 +1,20 @@
+name = "eyebreak-minter"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Non-secret configuration. Secrets (EYEBREAK_PRIVATE_JWK, LS_API_KEY,
+# LS_WEBHOOK_SECRET, optional EMAIL_API_KEY) are NOT here — set them with
+# `wrangler secret put` (see README.md).
+[vars]
+# PLACEHOLDER: your deployed app origin (no trailing slash). The Worker
+# redirects buyers to `${APP_BASE_URL}/?code=<code>`.
+APP_BASE_URL = "https://stevieray23.github.io/vg-hosting-template-v2"
+
+# PLACEHOLDER: your Lemon Squeezy store id (digits).
+LS_STORE_ID = "REPLACE_WITH_STORE_ID"
+
+# PLACEHOLDER: the product id of the supporter unlock (digits).
+LS_PRODUCT_ID = "REPLACE_WITH_PRODUCT_ID"
+
+# PLACEHOLDER: optional variant id; leave empty to accept any variant of the product.
+LS_VARIANT_ID = ""

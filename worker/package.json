@@ -1,0 +1,9 @@
+{
+  "name": "eyebreak-minter",
+  "private": true,
+  "type": "module",
+  "description": "EyeBreak Phase-2 auto-minting Cloudflare Worker (plain JS, no build step)",
+  "scripts": {
+    "test": "node test/crypto.test.js && node test/routes.test.js"
+  }
+}
