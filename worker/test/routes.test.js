@@ -130,6 +130,19 @@ async function main() {
   var claimOk = await verifyCode(code, ctx.publicJwk);
   assert(claimOk === true, 'minted /claim code verifies against the keypair');
 
+  /* ---- /claim invalid order param → 400 with NO outbound getOrder call ---- */
+  var badOrders = ['../x', 'a b', 'x'.repeat(65), ''];
+  for (var bi = 0; bi < badOrders.length; bi++) {
+    var fetchCalled = false;
+    var guardFetch = function () { fetchCalled = true; return jsonResponse(paidOrder()); };
+    var req = new Request('https://w/claim?order=' + encodeURIComponent(badOrders[bi]));
+    var bad400 = await handle(req, env, {}, guardFetch);
+    assert(bad400.status === 400,
+      '/claim invalid order ' + JSON.stringify(badOrders[bi]) + ' → 400');
+    assert(fetchCalled === false,
+      '/claim invalid order ' + JSON.stringify(badOrders[bi]) + ' → no getOrder call');
+  }
+
   /* ---- /claim non-GET → 405 ---- */
   var claimPost = await handle(
     new Request('https://w/claim?order=ORDER-1', { method: 'POST' }), env, {},
@@ -149,15 +162,55 @@ async function main() {
     body: hookBody
   }), env, {});
   assert(hook.status === 200, '/webhook good sig + order_created → 200');
+  assert((await hook.text()) === 'ok', '/webhook good sig + order_created → mint path ("ok")');
 
-  /* ---- /webhook non-order_created → 200 ignored ---- */
-  var ignoredSig = await hmacHex(env.LS_WEBHOOK_SECRET, hookBody);
-  var ignored = await handle(new Request('https://w/webhook', {
+  /* ---- /webhook authority is the SIGNED body, not the header ----
+   * Signed body says order_created; X-Event-Name header says something else
+   * (or is absent). The body must decide → mint path (200 "ok"). */
+  var hookHdrLies = await handle(new Request('https://w/webhook', {
     method: 'POST',
-    headers: { 'X-Signature': ignoredSig, 'X-Event-Name': 'subscription_created' },
+    headers: { 'X-Signature': goodSig, 'X-Event-Name': 'subscription_created' },
     body: hookBody
   }), env, {});
-  assert(ignored.status === 200, '/webhook other event → 200 (ignored)');
+  assert(hookHdrLies.status === 200,
+    '/webhook signed order_created + mismatched header → 200');
+  assert((await hookHdrLies.text()) === 'ok',
+    '/webhook signed body is authority over header → mint path ("ok")');
+
+  var hookNoHdr = await handle(new Request('https://w/webhook', {
+    method: 'POST',
+    headers: { 'X-Signature': goodSig },
+    body: hookBody
+  }), env, {});
+  assert(hookNoHdr.status === 200, '/webhook signed order_created, no header → 200');
+  assert((await hookNoHdr.text()) === 'ok',
+    '/webhook signed body alone triggers mint (no X-Event-Name) → "ok"');
+
+  /* ---- /webhook signed body says a non-order event → 200 ignored ---- */
+  var otherEventBody = JSON.stringify({
+    meta: { event_name: 'subscription_created' },
+    data: { id: 'ORDER-2', attributes: { user_name: 'Joe', order_number: 1002 } }
+  });
+  var otherSig = await hmacHex(env.LS_WEBHOOK_SECRET, otherEventBody);
+  var signedOther = await handle(new Request('https://w/webhook', {
+    method: 'POST',
+    headers: { 'X-Signature': otherSig, 'X-Event-Name': 'order_created' },
+    body: otherEventBody
+  }), env, {});
+  assert(signedOther.status === 200,
+    '/webhook signed non-order event → 200 (even if header lies "order_created")');
+  assert((await signedOther.text()) === 'ignored',
+    '/webhook signed body decides "ignored" over an order_created header');
+
+  /* ---- /webhook valid HMAC but malformed JSON body → 400 ---- */
+  var badJson = 'not-json{';
+  var badJsonSig = await hmacHex(env.LS_WEBHOOK_SECRET, badJson);
+  var malformed = await handle(new Request('https://w/webhook', {
+    method: 'POST',
+    headers: { 'X-Signature': badJsonSig, 'X-Event-Name': 'order_created' },
+    body: badJson
+  }), env, {});
+  assert(malformed.status === 400, '/webhook valid HMAC + malformed JSON → 400');
 
   /* ---- /webhook bad sig → 401 ---- */
   var bad = await handle(new Request('https://w/webhook', {
