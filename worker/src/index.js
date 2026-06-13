@@ -57,6 +57,10 @@ async function handleClaim(request, env, fetchImpl) {
   var url = new URL(request.url);
   var orderId = url.searchParams.get('order');
   if (!orderId) return text('missing order', 400);
+  // Cheap junk/amplification guard before any outbound LS call. Permissive
+  // (the exact LS {order_id} format is unconfirmed); encodeURIComponent in
+  // getOrder already prevents injection, so this only rejects obvious junk.
+  if (!/^[A-Za-z0-9_-]{1,64}$/.test(orderId)) return text('invalid order', 400);
 
   var order = await getOrder(env, orderId, fetchImpl);
   if (!order || !assertPaidForProduct(order, env)) {
@@ -78,10 +82,20 @@ async function handleWebhook(request, env, fetchImpl) {
   var ok = await verifyWebhookSignature(rawBody, sig, env.LS_WEBHOOK_SECRET);
   if (!ok) return text('bad signature', 401);
 
-  var eventName = request.headers.get('X-Event-Name');
-  if (eventName !== 'order_created') return text('ignored', 200);
+  // Parse the HMAC-verified raw body. Malformed JSON -> 400.
+  var body;
+  try {
+    body = JSON.parse(rawBody);
+  } catch (e) {
+    return text('bad request', 400);
+  }
 
-  var body = JSON.parse(rawBody);
+  // Authoritative event gate: the SIGNED body decides, not the X-Event-Name
+  // header (which is unsigned/attacker-shaped and only a cheap pre-filter).
+  if (!body || !body.meta || body.meta.event_name !== 'order_created') {
+    return text('ignored', 200);
+  }
+
   var attrs = (body && body.data && body.data.attributes) || {};
   var code = await mintForOrder(attrs, env);
   await maybeEmailCode(env, attrs, code, fetchImpl);
